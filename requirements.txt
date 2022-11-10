@@ -1,0 +1,2 @@
+typer==0.7.0
+python-gitlab>=3<4
