@@ -5,22 +5,22 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="gitlab-syphon",
+    name="giphon",
     author="Gabriel Creti",
     author_email="gabrielcreti@gmail.com",
     description="Copy locally a Gitlab group or instance",
     keywords="gitlab, clone, copy",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/kabooboo/gitlab-siphon",
+    url="https://github.com/kabooboo/giphon",
     project_urls={
-        "Documentation": "https://github.com/kabooboo/gitlab-siphon",
-        "Bug Reports": "https://github.com/kabooboo/gitlab-siphon/issues",
-        "Source Code": "https://github.com/kabooboo/gitlab-siphon",
+        "Documentation": "https://github.com/kabooboo/giphon",
+        "Bug Reports": "https://github.com/kabooboo/giphon/issues",
+        "Source Code": "https://github.com/kabooboo/giphon",
         # 'Funding': '',
         # 'Say Thanks!': '',
     },
-    package_dir={"": "gitlab_siphon"},
+    package_dir={"": "giphon"},
     packages=setuptools.find_packages(where="src"),
     classifiers=[
         # see https://pypi.org/classifiers/
@@ -42,7 +42,7 @@ setuptools.setup(
     },
     entry_points={
         "console_scripts": [
-            "run=gitlab_siphon:main",
+            "run=giphon:main",
         ],
     },
 )
