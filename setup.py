@@ -20,7 +20,7 @@ setuptools.setup(
         # 'Funding': '',
         # 'Say Thanks!': '',
     },
-    package_dir={"": "gitlab-siphon"},
+    package_dir={"": "gitlab_siphon"},
     packages=setuptools.find_packages(where="src"),
     classifiers=[
         # see https://pypi.org/classifiers/
