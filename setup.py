@@ -21,7 +21,7 @@ setuptools.setup(
         # 'Say Thanks!': '',
     },
     package_dir={"": "giphon"},
-    packages=setuptools.find_packages(where="src"),
+    packages=setuptools.find_packages(where="giphon"),
     classifiers=[
         # see https://pypi.org/classifiers/
         "Development Status :: 5 - Production/Stable",
