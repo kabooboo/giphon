@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="gitlab-syphon",
+    name="gitlab_syphon",
     author="Gabriel Creti",
     author_email="gabrielcreti@gmail.com",
     description="Copy locally a Gitlab group or instance",
