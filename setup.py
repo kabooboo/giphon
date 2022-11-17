@@ -17,8 +17,6 @@ setuptools.setup(
         "Documentation": "https://github.com/kabooboo/giphon",
         "Bug Reports": "https://github.com/kabooboo/giphon/issues",
         "Source Code": "https://github.com/kabooboo/giphon",
-        # 'Funding': '',
-        # 'Say Thanks!': '',
     },
     package_dir={"": "giphon"},
     packages=setuptools.find_packages(where="giphon"),

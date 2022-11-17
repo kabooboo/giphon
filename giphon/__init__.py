@@ -6,7 +6,7 @@ __copywrite__ = "Copyright (C) 2022 Gabriel Creti <gabrielcreti@gmail.com>"
 __email__ = "gabrielcreti@gmail.com"
 __status__ = "Development"
 
-from __main__ import siphon
+from .siphon import siphon
 
 
 __all__ = [
