@@ -13,7 +13,7 @@ def save_environment_variables(path, element, logger):
 
         scope = variable.environment_scope
 
-        key = f'{variable.key}-{scope.replace("*", "star").replace("/", "-")}'
+        key = f'{variable.key}-{scope.replace("*", "STAR").replace("/", "-")}'
 
         with open(os.path.join(env_path, f"{key}"), "w") as f:
             f.write(variable.value)
