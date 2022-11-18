@@ -32,7 +32,7 @@ def handle_project(
                     repository_url, repository_path, no_single_branch=True
                 )
                 break
-            except git.exc.GitCommandError as e:
+            except git.GitCommandError as e:
                 if e.status == 128:
                     logger.warning(e, exc_info=True)
                     return

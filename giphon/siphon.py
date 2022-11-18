@@ -103,7 +103,7 @@ def siphon(
         gitlab_url (str): The URL for the Gitlab Instance. Defaults to
           "https://gitlab.com".
         fetch_repositories (bool, optional): Whether to fetch remotes on
-          repositories that already exist. Defaults to True
+          repositories that already exist. Defaults to True.
         save_ci_variables (bool, optional): Whether to download CI/CD
           variables to a .env directory.. Defaults to True.
         clone_archived (bool, optional): Whether to clone archived repository.
@@ -133,7 +133,9 @@ def siphon(
         flat_tree = []
 
         for index, element in enumerate(
-            flatten_groups_tree(groups=groups, gl=gl, archived=clone_archived)
+            flatten_groups_tree(
+                groups=groups, gl=gl, archived=bool(clone_archived)
+            )
         ):
             progress.update(
                 flat_tree_task_id,
@@ -168,7 +170,7 @@ def siphon(
                 handle_project(
                     repository_path=output / Path(element.path_with_namespace),
                     repository_url=element.ssh_url_to_repo,
-                    fetch=fetch_repositories,
+                    fetch=bool(fetch_repositories),
                     logger=logger,
                 )
 

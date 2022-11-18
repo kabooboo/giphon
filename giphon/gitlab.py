@@ -5,16 +5,16 @@ from pathlib import Path
 from typing import Generator, List, Union
 
 from gitlab import Gitlab
+from gitlab.base import RESTObject
 from gitlab.exceptions import GitlabListError
 from gitlab.v4.objects import Group, GroupVariable, Project, ProjectVariable
 
 
-Element = Union[Group, Project]
 Variable = Union[ProjectVariable, GroupVariable]
 
 
 def save_environment_variables(
-    path: Path, element: Element, logger: Logger
+    path: Path, element: RESTObject, logger: Logger
 ) -> None:
     """
     Save environment variables locally for a given Gitlab group or project.
@@ -38,7 +38,7 @@ def save_environment_variables(
     gitlab_element_path = os.path.join(
         path, get_gitlab_element_full_path(element)
     )
-    env_path = os.path.join(gitlab_element_path, ".env")
+    env_path = gitlab_element_path / Path(".env")
 
     if not os.path.isdir(env_path):
         os.makedirs(env_path, exist_ok=True)
@@ -57,7 +57,7 @@ def save_environment_variables(
         )
 
 
-def get_gitlab_element_type(element: Element) -> str:
+def get_gitlab_element_type(element: RESTObject) -> str:
     """
     Get a pretty-printable string representing the element's type.
 
@@ -77,11 +77,11 @@ def get_gitlab_element_type(element: Element) -> str:
         return "project"
     else:
         raise NotImplementedError(
-            error=(f"Got unsupported gitlab object type {type(element)}")
+            f"Got unsupported gitlab object type {type(element)}"
         )
 
 
-def get_gitlab_element_full_path(element: Element) -> Path:
+def get_gitlab_element_full_path(element: RESTObject) -> Path:
     """
     Get the full path of a given Gitlab Element
 
@@ -101,13 +101,13 @@ def get_gitlab_element_full_path(element: Element) -> Path:
         return Path(element.path_with_namespace)
     else:
         raise NotImplementedError(
-            error=(f"Got unsupported gitlab object type {type(element)}")
+            f"Got unsupported gitlab object type {type(element)}"
         )
 
 
 def flatten_groups_tree(
-    *, groups: List[Group], gl: Gitlab, archived: bool = False
-) -> Generator[Element, None, None]:
+    *, groups: List[RESTObject], gl: Gitlab, archived: bool = False
+) -> Generator[RESTObject, None, None]:
     """
     Generate a flat tree containing all elements to handle for a given set of
     groups.
@@ -151,7 +151,7 @@ def get_gitlab_instance(*, url: str, private_token: str) -> Gitlab:
     return Gitlab(url=url, private_token=private_token)
 
 
-def get_groups_from_path(namespace: str, gl: Gitlab) -> List[Group]:
+def get_groups_from_path(namespace: Path, gl: Gitlab) -> List[RESTObject]:
     """
     Get a list of Gitlab groups contained in a given namespace.
 
@@ -164,8 +164,8 @@ def get_groups_from_path(namespace: str, gl: Gitlab) -> List[Group]:
     """
 
     if namespace == Path("/"):
-        groups = gl.groups.list(parent_id=None, iterator=True)
+        groups = [el for el in gl.groups.list(parent_id=None, iterator=True)]
     else:
-        groups = (gl.groups.get(namespace),)
+        groups = [gl.groups.get(str(namespace))]
 
     return groups
