@@ -25,7 +25,7 @@ from .gitlab import (
 )
 
 
-def _setup_logger(name, log_level):
+def _setup_logger(name: str, log_level: int) -> logging.Logger:
     class _InfoFilter(logging.Filter):
         def filter(self, rec):
             return rec.levelno in (logging.DEBUG, logging.INFO)
@@ -81,15 +81,36 @@ def siphon(
         False,
         help="Whether to clone archived repository.",
     ),
-    verbose: int = Option(
-        0,
+    verbose: bool = Option(
+        False,
         "--verbose",
         "-v",
         help=("The level of verbosity."),
     ),
-):
+) -> None:
     """
-    Clone repositories from a Gitlab group or instance.
+    Siphon contents from a Gitlab instance or group.
+
+    This function traverses recursively a Gitlab instance or group in order to
+    copy locally all of the project's repositories and their environment
+    variables, while keeping the arborescence.
+
+    Args:
+        namespace (Path): The Gitlab namespace to recusively siphon.
+          Use `/` to siphon the instance.
+        output (Path): The target path to clone the repositories to.", ).
+        gitlab_token (str): The Personal Access Token for the Gitlab v4 API."
+        gitlab_url (str): The URL for the Gitlab Instance. Defaults to
+          "https://gitlab.com".
+        fetch_repositories (bool, optional): Whether to fetch remotes on
+          repositories that already exist. Defaults to True
+        save_ci_variables (bool, optional): Whether to download CI/CD
+          variables to a .env directory.. Defaults to True.
+        clone_archived (bool, optional): Whether to clone archived repository.
+          Defaults to False.
+        verbose (bool, optional): Whether the outputs should be verbose.
+          Defaults to False.
+
     """
     logger = _setup_logger(
         __name__, logging.INFO if verbose <= 0 else logging.DEBUG
@@ -143,12 +164,17 @@ def siphon(
                 description=(f"Handling {element_type} {element_full_path}"),
             )
 
+            if isinstance(element, Project):
+                handle_project(
+                    repository_path=output / Path(element.path_with_namespace),
+                    repository_url=element.ssh_url_to_repo,
+                    fetch=fetch_repositories,
+                    logger=logger,
+                )
+
             if save_ci_variables:
                 save_environment_variables(output, element, logger)
 
-            if isinstance(element, Project):
-                handle_project(output, element, fetch_repositories, logger)
-
             processed += 1
 
-        print(f"Done cloning {processed} elements.")
+        logger.info(f"Done cloning {processed} elements.")

@@ -1,23 +1,35 @@
-import os
+from logging import Logger
+from pathlib import Path
 
 import git
 
 
 def handle_project(
-    root_path,
-    project,
-    fetch,
-    logger,
+    *,
+    repository_path: Path,
+    repository_url: str,
+    fetch: bool,
+    logger: Logger,
 ):
+    """
+    Clone or fetch remotes for a project.
 
-    repo_url = project.ssh_url_to_repo
-    repo_path = os.path.join(root_path, project.path_with_namespace)
+    Args:
+        repository_path (Path): the path on which the project should exist
+        repository_url (str): the git URL for the repository
+        fetch (bool): whether to fetch all remotes if the project already
+          exists locally
+        logger (Logger): the logger to use to generate logs
 
-    if not os.path.isdir(repo_path):
+    Raises:
+        git.exc.GitCommandError: Git error when cloning
+    """
+
+    if not repository_path.is_dir():
         while "Trying to clone the repo":
             try:
                 repo = git.Repo.clone_from(
-                    repo_url, repo_path, no_single_branch=True
+                    repository_url, repository_path, no_single_branch=True
                 )
                 break
             except git.exc.GitCommandError as e:
@@ -29,10 +41,10 @@ def handle_project(
 
     else:
         if fetch:
-            repo = git.Repo(repo_path)
+            repo = git.Repo(repository_path)
             _fetch_repository(repo)
 
 
-def _fetch_repository(repo):
-    for remote in repo.remotes:
+def _fetch_repository(repository: git.Repo):
+    for remote in repository.remotes:
         remote.fetch()

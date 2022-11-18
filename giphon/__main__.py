@@ -4,11 +4,9 @@ from typer import Typer
 from .siphon import siphon
 
 
-# TODO: add typehints
-# TODO: add docstrings
-# TODO: add tests
-# TODO: add CI
 # TODO: publish package
+# TODO: add CI
+# TODO: add tests
 
 
 if __name__ == "__main__":
