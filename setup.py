@@ -18,7 +18,7 @@ setuptools.setup(
         "Bug Reports": "https://github.com/kabooboo/giphon/issues",
         "Source Code": "https://github.com/kabooboo/giphon",
     },
-    package_dir={"": "giphon"},
+    package_dir={"": "src"},
     packages=setuptools.find_packages(where="giphon"),
     classifiers=[
         # see https://pypi.org/classifiers/
@@ -34,7 +34,12 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.7",
-    install_requires=open("requirements.txt").readlines(),
+    install_requires=[
+      "typer>=0.7",
+      "python-gitlab>=3,<4",
+      "GitPython>=3,<4",
+      "rich>=12,<13",
+    ],
     extras_require={
         "test": ["pytest"],
     },

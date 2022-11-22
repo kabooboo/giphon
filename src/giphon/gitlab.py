@@ -38,7 +38,7 @@ def save_environment_variables(
     gitlab_element_path = os.path.join(
         path, get_gitlab_element_full_path(element)
     )
-    env_path = gitlab_element_path / Path(".env")
+    env_path = gitlab_element_path / Path(".env.d")
 
     if not os.path.isdir(env_path):
         os.makedirs(env_path, exist_ok=True)
