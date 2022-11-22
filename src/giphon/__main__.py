@@ -1,10 +1,10 @@
 #!/usr/bin/python3
+
 from typer import Typer
 
 from .siphon import siphon
 
 
-# TODO: publish package
 # TODO: add CI
 # TODO: add tests
 
