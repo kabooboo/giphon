@@ -6,7 +6,7 @@ from typing import Generator, List, Union
 
 from gitlab import Gitlab
 from gitlab.base import RESTObject
-from gitlab.exceptions import GitlabListError
+from gitlab.exceptions import GitlabHttpError, GitlabListError
 from gitlab.v4.objects import Group, GroupVariable, Project, ProjectVariable
 
 
@@ -49,7 +49,7 @@ def save_environment_variables(
         for variable in variables:
             _save_environment_variable(variable, env_path)
 
-    except GitlabListError as e:
+    except (GitlabListError, GitlabHttpError) as e:
         logger.debug(e, exc_info=True)
         logger.debug(
             f"[Unable to save CI variables: {el_type} {element.name} "
