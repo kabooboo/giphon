@@ -4,7 +4,6 @@ from typer import Typer
 
 from .siphon import siphon
 
-# TODO: add CI
 # TODO: pimp Readme
 
 

@@ -99,6 +99,7 @@ dependencies = [
 
 [tool.hatch.envs.test.scripts]
 cov = 'pytest --cov-report=term-missing --cov-report=xml --cov-config=pyproject.toml --cov=src/giphon --cov=tests'
+no-cov = 'pytest --cov-report=term-missing --cov-report=xml --cov-config=pyproject.toml --cov=src/giphon --cov=tests --no-cov'
 
 # Style checks
 [tool.hatch.envs.style]

@@ -11,6 +11,7 @@ on:
       - master
 
 jobs:
+
   style:
     runs-on: ubuntu-latest
     steps:
@@ -23,12 +24,12 @@ jobs:
         run: pip install hatch
       - name: Run Hatch coverage tests
         run: hatch run style:check
+
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
-
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -39,8 +40,6 @@ jobs:
         run: pip install hatch
       - name: Run Hatch coverage tests
         run: hatch run test:cov
-
-
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
@@ -49,14 +48,13 @@ jobs:
           fail_below_min: false
           format: markdown
           hide_branch_rate: false
-          hide_complexity: false
+          hide_complexity: true
           indicators: true
           output: both
           thresholds: '80 90'
-
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && matrix.python-version == '3.11'
         with:
           recreate: true
           path: code-coverage-results.md
