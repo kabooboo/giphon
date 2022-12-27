@@ -25,7 +25,12 @@ def test_fetch_repository():
 
 
 def test_handle_project_with_dir(monkeypatch):
-    """Test by monkeypatching the necessary modules"""
+    """
+    Test the `handle_project` when it doesn't clone repositories, but fetches
+    new content.
+
+    Tests by capturing the outputed messages of the Fake logger.
+    """
 
     def mock_is_dir(_):
         return True
@@ -37,21 +42,34 @@ def test_handle_project_with_dir(monkeypatch):
     monkeypatch.setattr(git.Repo, "clone_from", mock_clone_from)
     monkeypatch.setattr(git, "Repo", FakeRepository)
 
-    f = StringIO()
-
-    with contextlib.redirect_stdout(f):
+    # Test behaviour when function is instructed to fetch
+    fetch_output = StringIO()
+    with contextlib.redirect_stdout(fetch_output):
         handle_project(
             repository_path=Path("toto"),
-            repository_url="git@toto.com",
+            repository_url="git@toto.com",  # Doesn't intervene
             fetch=True,
             logger=FakeLogger(),
         )
-    output = f.getvalue()
+    output = fetch_output.getvalue()
 
     assert output == (
         "Would have fetched the repository\n"
         "Would have fetched the repository\n"
     )
+
+    # Test behaviour when function is instructed to not fetch
+    no_fetch_output = StringIO()
+    with contextlib.redirect_stdout(no_fetch_output):
+        handle_project(
+            repository_path=Path("toto"),
+            repository_url="git@toto.com",  # Doesn't intervene
+            fetch=False,
+            logger=FakeLogger(),
+        )
+    output = no_fetch_output.getvalue()
+
+    assert output == ""
 
 
 def test_handle_project_without_dir(monkeypatch):
