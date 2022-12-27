@@ -1,10 +1,4 @@
 
-# Tool configuration
-[tool.isort]
-profile = "black"
-
-[tool.black]
-line-length = 79
 
 # Hatch configuration
 [build-system]
@@ -58,6 +52,25 @@ test = ["pytest"]
 [project.scripts]
 run = "giphon:main"
 
+# Tools
+# isort
+[tool.isort]
+profile = "black"
+
+# black
+[tool.black]
+line-length = 79
+
+# coverage
+[tool.coverage.report]
+exclude_lines = [
+  "if __name__ == .__main__.:",
+]
+omit = [
+  "tests/*",
+]
+
+# hatch
 [tool.hatch.version]
 path = "src/giphon/__about__.py"
 
@@ -83,7 +96,7 @@ dependencies = [
 ]
 
 [tool.hatch.envs.test.scripts]
-cov = 'pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=pkg --cov=tests'
+cov = 'pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/giphon --cov=tests'
 
 # Style checks
 [tool.hatch.envs.style]
