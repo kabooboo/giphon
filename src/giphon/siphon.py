@@ -1,5 +1,4 @@
 import logging
-
 from pathlib import Path
 from sys import stderr, stdout
 from typing import Optional

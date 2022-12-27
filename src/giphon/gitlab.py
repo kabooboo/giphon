@@ -1,5 +1,4 @@
 import os
-
 from logging import Logger
 from pathlib import Path
 from typing import Generator, List, Union
@@ -8,7 +7,6 @@ from gitlab import Gitlab
 from gitlab.base import RESTObject
 from gitlab.exceptions import GitlabHttpError, GitlabListError
 from gitlab.v4.objects import Group, GroupVariable, Project, ProjectVariable
-
 
 Variable = Union[ProjectVariable, GroupVariable]
 

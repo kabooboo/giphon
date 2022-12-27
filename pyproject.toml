@@ -1,3 +1,106 @@
+
+# Tool configuration
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 79
+
+# Hatch configuration
 [build-system]
-requires = ["setuptools>=46.4.0", "wheel"]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+authors = [
+  {name = "Gabriel Creti", email = "gabrielcreti@gmail.com"},
+]
+classifiers = [
+  # see https://pypi.org/classifiers/
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Build Tools",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "typer>=0.7",
+  "python-gitlab>=3,<4",
+  "GitPython>=3,<4",
+  "rich>=12,<13",
+]
+description = "Copy locally a Gitlab group or instance"
+dynamic = ["version"]
+keywords = [
+  "gitlab",
+  "clone",
+  "copy",
+]
+license-files = {paths = ["LICENSE"]}
+name = "giphon"
+readme = "README.md"
+requires-python = ">=3.7"
+
+[project.urls]
+"Bug Reports" = "https://github.com/kabooboo/giphon/issues"
+Documentation = "https://github.com/kabooboo/giphon"
+Homepage = "https://github.com/kabooboo/giphon"
+"Source Code" = "https://github.com/kabooboo/giphon"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+run = "giphon:main"
+
+[tool.hatch.version]
+path = "src/giphon/__about__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/giphon"]
+
+[tool.hatch.publish.index]
+disable = true
+
+# Unit tests
+[tool.hatch.envs.test]
+dependencies = [
+  "coverage[toml]",
+  "pytest",
+  "pytest-cov",
+  "pytest-mock",
+]
+
+[tool.hatch.envs.test.scripts]
+cov = 'pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=pkg --cov=tests'
+
+# Style checks
+[tool.hatch.envs.style]
+dependencies = [
+  "flake8",
+  "black",
+  "isort",
+]
+detached = true
+[tool.hatch.envs.style.scripts]
+check = [
+  "flake8 .",
+  "black --check --diff  .",
+  "isort --check-only --diff .",
+]
+fmt = [
+  "isort .",
+  "black .",
+  "check",
+]
