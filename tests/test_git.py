@@ -39,8 +39,8 @@ def test_handle_project_with_dir(monkeypatch):
         return FakeRepository(*args, **kwargs)
 
     monkeypatch.setattr(Path, "is_dir", mock_is_dir)
-    monkeypatch.setattr(git.Repo, "clone_from", mock_clone_from)
-    monkeypatch.setattr(git, "Repo", FakeRepository)
+    monkeypatch.setattr(git.repo.Repo, "clone_from", mock_clone_from)
+    monkeypatch.setattr(git.repo, "Repo", FakeRepository)
 
     # Test behaviour when function is instructed to fetch
     fetch_output = StringIO()
