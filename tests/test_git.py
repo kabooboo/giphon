@@ -1,3 +1,7 @@
+"""
+Unit tests for the git module.
+"""
+
 import contextlib
 from io import StringIO
 from pathlib import Path
@@ -7,7 +11,7 @@ import pytest
 
 from giphon.git import _fetch_repository, handle_project
 
-from .utils import FakeLogger, FakeRepository
+from .utils import MockLogger, MockRepository
 
 
 def test_fetch_repository():
@@ -15,7 +19,7 @@ def test_fetch_repository():
     f = StringIO()
 
     with contextlib.redirect_stdout(f):
-        _fetch_repository(FakeRepository())
+        _fetch_repository(MockRepository())
     output = f.getvalue()
 
     assert output == (
@@ -36,11 +40,11 @@ def test_handle_project_with_dir(monkeypatch):
         return True
 
     def mock_clone_from(*args, **kwargs):
-        return FakeRepository(*args, **kwargs)
+        return MockRepository(*args, **kwargs)
 
     monkeypatch.setattr(Path, "is_dir", mock_is_dir)
     monkeypatch.setattr(git.repo.Repo, "clone_from", mock_clone_from)
-    monkeypatch.setattr(git.repo, "Repo", FakeRepository)
+    monkeypatch.setattr(git.repo, "Repo", MockRepository)
 
     # Test behaviour when function is instructed to fetch
     fetch_output = StringIO()
@@ -49,7 +53,7 @@ def test_handle_project_with_dir(monkeypatch):
             repository_path=Path("toto"),
             repository_url="git@toto.com",  # Doesn't intervene
             fetch=True,
-            logger=FakeLogger(),
+            logger=MockLogger(),
         )
     output = fetch_output.getvalue()
 
@@ -65,7 +69,7 @@ def test_handle_project_with_dir(monkeypatch):
             repository_path=Path("toto"),
             repository_url="git@toto.com",  # Doesn't intervene
             fetch=False,
-            logger=FakeLogger(),
+            logger=MockLogger(),
         )
     output = no_fetch_output.getvalue()
 
@@ -85,7 +89,7 @@ def test_handle_project_without_dir(monkeypatch):
 
     def mock_clone_from(*args, **kwargs):
         print("Successfully fake-cloned")
-        return FakeRepository(*args, **kwargs)
+        return MockRepository(*args, **kwargs)
 
     monkeypatch.setattr(Path, "is_dir", mock_is_dir)
     monkeypatch.setattr(git.Repo, "clone_from", mock_clone_from)
@@ -97,7 +101,7 @@ def test_handle_project_without_dir(monkeypatch):
             repository_path=Path("toto"),
             repository_url="git@toto.com",  # Doesn't intervene
             fetch=False,  # Doesn't intervene
-            logger=FakeLogger(),  # Doesn't intervene
+            logger=MockLogger(),  # Doesn't intervene
         )
 
     output = f.getvalue()
@@ -129,13 +133,13 @@ def test_handle_project_without_dir_and_handled_exception(monkeypatch):
             repository_path=Path("toto"),
             repository_url="git@toto.com",  # Doesn't intervene
             fetch=False,  # Doesn't intervene
-            logger=FakeLogger(),  # Doesn't intervene
+            logger=MockLogger(),  # Doesn't intervene
         )
 
     output = f.getvalue()
 
     assert output == (
-        "Would have logged Cmd('mock-clone') failed due to: exit code(128)\n"
+        "Would have warned Cmd('mock-clone') failed due to: exit code(128)\n"
         "  cmdline: mock-clone with exc_info True\n"
     )
 
@@ -162,5 +166,5 @@ def test_handle_project_without_dir_and_unhandled_exception(monkeypatch):
             repository_path=Path("toto"),
             repository_url="git@toto.com",  # Doesn't intervene
             fetch=False,  # Doesn't intervene
-            logger=FakeLogger(),  # Doesn't intervene
+            logger=MockLogger(),  # Doesn't intervene
         )

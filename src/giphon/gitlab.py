@@ -75,7 +75,8 @@ def get_gitlab_element_type(element: RESTObject) -> str:
         return "project"
     else:
         raise NotImplementedError(
-            f"Got unsupported gitlab object type {type(element)}"
+            f"Got unsupported gitlab object type {type(element)}\n"
+            f"Excpected {Group} or {Project}"
         )
 
 
@@ -100,6 +101,7 @@ def get_gitlab_element_full_path(element: RESTObject) -> Path:
     else:
         raise NotImplementedError(
             f"Got unsupported gitlab object type {type(element)}"
+            f"Excpected {Group} or {Project}"
         )
 
 
