@@ -335,31 +335,36 @@ def test_flatten_groups_tree():
 
 
     """
+    foo = MockGitlabProject(id="foo")
+    faa = MockGitlabProject(id="faa")
+
+    bar = MockGitlabProject(id="bar")
+    baz = MockGitlabProject(id="baz")
+
+    ipsum = MockGitlabGroup(
+        id="ipsum",
+        projects=[foo, faa],
+    )
+
+    amet = MockGitlabGroup(id="amet")
+
+    lorem = MockGitlabGroup(
+        id="lorem",
+        subgroups=[
+            ipsum,
+            amet,
+        ],
+        projects=[
+            bar,
+            baz,
+        ],
+    )
+    dolor = MockGitlabGroup(id="dolor")
 
     # Build a custom group tree to test
     groups = [
-        (
-            lorem := MockGitlabGroup(
-                id="lorem",
-                subgroups=[
-                    (
-                        ipsum := MockGitlabGroup(
-                            id="ipsum",
-                            projects=[
-                                (foo := MockGitlabProject(id="foo")),
-                                (faa := MockGitlabProject(id="faa")),
-                            ],
-                        )
-                    ),
-                    (amet := MockGitlabGroup(id="amet")),
-                ],
-                projects=[
-                    (bar := MockGitlabProject(id="bar")),
-                    (baz := MockGitlabProject(id="baz")),
-                ],
-            )
-        ),
-        (dolor := MockGitlabGroup(id="dolor")),
+        lorem,
+        dolor,
     ]
 
     gl = MockGitlab(

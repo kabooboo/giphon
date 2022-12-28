@@ -48,6 +48,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Hatch and any other packages
         run: pip install hatch
+      - name: Add Gitlab SSH keys
+        run: ssh-keyscan -H gitlab.com >> ~/.ssh/known_hosts
       - name: Run Hatch coverage tests
         run: hatch run test:cov
       - name: Code Coverage Report
