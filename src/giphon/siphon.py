@@ -80,6 +80,10 @@ def siphon(
         False,
         help="Whether to clone archived repository.",
     ),
+    clone_through_ssh: Optional[bool] = Option(
+        True,
+        help="Whether to clone repositories through SSH (Default) or https.",
+    ),
     verbose: bool = Option(
         False,
         "--verbose",
@@ -166,9 +170,16 @@ def siphon(
             )
 
             if isinstance(element, Project):
+
+                url_to_repo = (
+                    element.ssh_url_to_repo
+                    if clone_through_ssh
+                    else element.http_url_to_repo
+                )
+
                 handle_project(
                     repository_path=output / Path(element.path_with_namespace),
-                    repository_url=element.ssh_url_to_repo,
+                    repository_url=url_to_repo,
                     fetch=bool(fetch_repositories),
                     logger=logger,
                 )
