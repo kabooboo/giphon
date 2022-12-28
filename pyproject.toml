@@ -99,9 +99,30 @@ dependencies = [
 ]
 
 [tool.hatch.envs.test.scripts]
-cov = 'pytest --cov-report=term-missing --cov-report=xml --cov-config=pyproject.toml --cov=src/giphon --cov=tests'
-no-cov = 'pytest --cov-report=term-missing --cov-report=xml --cov-config=pyproject.toml --cov=src/giphon --cov=tests --no-cov'
-typing = 'mypy src --strict --cobertura-xml-report mypy-report'
+cov = """\
+  pytest \
+  --cov-report=term-missing \
+  --cov-report=xml \
+  --cov-config=pyproject.toml \
+  --cov=src/giphon \
+  --cov=tests \
+  """
+
+no-cov = """\
+  pytest \
+  --cov-report=term-missing \
+  --cov-report=xml \
+  --cov-config=pyproject.toml \
+  --cov=src/giphon \
+  --cov=tests \
+  --no-cov \
+  """
+
+typing = """\
+  mypy src \
+  --strict \
+  --cobertura-xml-report=mypy-report\
+  """
 
 # Style checks
 [tool.hatch.envs.style]
