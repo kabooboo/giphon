@@ -5,6 +5,7 @@ from typer import Typer
 from .siphon import siphon
 
 # TODO: pimp Readme
+# TODO: finish tests
 
 
 if __name__ == "__main__":

@@ -22,6 +22,19 @@ jobs:
       - name: Run Hatch coverage tests
         run: hatch run style:check
 
+  typing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+      - name: Install Hatch and any other packages
+        run: pip install hatch
+      - name: Run Hatch coverage tests
+        run: hatch run test:typing
+
   build:
     runs-on: ubuntu-latest
     strategy:

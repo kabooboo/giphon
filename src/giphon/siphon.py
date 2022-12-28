@@ -26,7 +26,7 @@ from .gitlab import (
 
 def _setup_logger(name: str, log_level: int) -> logging.Logger:
     class _InfoFilter(logging.Filter):
-        def filter(self, rec):
+        def filter(self: "_InfoFilter", rec: logging.LogRecord) -> bool:
             return rec.levelno in (logging.DEBUG, logging.INFO)
 
     logger = logging.getLogger(name)
