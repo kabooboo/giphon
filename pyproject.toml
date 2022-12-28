@@ -95,6 +95,7 @@ dependencies = [
   "pytest",
   "pytest-cov",
   "pytest-mock",
+  "mypy",
 ]
 
 [tool.hatch.envs.test.scripts]

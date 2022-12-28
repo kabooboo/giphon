@@ -32,7 +32,7 @@ jobs:
           python-version: "3.x"
       - name: Install Hatch and any other packages
         run: pip install hatch
-      - name: Run Hatch coverage tests
+      - name: Run Hatch static typing tests
         run: hatch run test:typing
 
   build:
