@@ -22,5 +22,9 @@ jobs:
           HATCH_INDEX_USER: __token__
           HATCH_INDEX_AUTH: ${{ secrets.PYPI_API_TOKEN }}
         run: |
+          if [ "$(hatch version)" != "$GITHUB_REF_NAME" ]; then
+            echo -e "Missmatch between tag and __version__.\nCancelling release..."
+            exit 1
+          fi
           hatch build
           hatch publish --yes
