@@ -22,5 +22,16 @@ jobs:
           HATCH_INDEX_USER: __token__
           HATCH_INDEX_AUTH: ${{ secrets.PYPI_API_TOKEN }}
         run: |
+          if [ "$(hatch version)" != "$GITHUB_REF_NAME" ]; then
+            echo -e "Missmatch between tag and __version__.\nCancelling release..."
+            exit 1
+          fi
+
+          # First, a quick hack to replace images with their absolute
+          # counterparts so that `pypi` images render correctly
+          export GH_CONTENT_URL_PREFIX="https:\/\/raw.githubusercontent.com\/${GITHUB_REPOSITORY}\/${GITHUB_REF_NAME}\/"
+          perl -i -pe  's~!\[(.*)\]\((?!https|http)[.\/]*(.*)\)~![$1]('"$GH_CONTENT_URL_PREFIX"'$2)~g' README.md
+
+          # Then, we publish the package
           hatch build
           hatch publish --yes
