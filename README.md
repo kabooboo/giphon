@@ -1,3 +1,4 @@
+![Logo](docs/assets/logo.png)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/giphon) [![Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://pypi.org/project/black/) ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/kabooboo/giphon/test.yml?label=tests)
 [![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://github.com/pypa/hatch) ![PyPI](https://img.shields.io/pypi/v/giphon) ![PyPI - License](https://img.shields.io/pypi/l/giphon) ![GitHub Repo stars](https://img.shields.io/github/stars/kabooboo/giphon?style=social)
 
@@ -67,3 +68,7 @@ siphon(
 ```
 
 The function takes as inputs the same parameters from the CLI tool.
+
+---
+
+Logo is © from [**Midjourney**](https://midjourney.com)
