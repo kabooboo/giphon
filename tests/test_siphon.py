@@ -65,6 +65,7 @@ def test_siphon(caplog):
             save_ci_variables=False,  # Cannot save variables on public repos
             clone_archived=False,
             clone_through_ssh=False,
+            gitlab_username="",
             verbose=False,
         )
 

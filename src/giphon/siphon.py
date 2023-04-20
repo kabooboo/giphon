@@ -182,7 +182,7 @@ def siphon(
             if isinstance(element, Project):
                 if clone_through_ssh:
                     url_to_repo = element.ssh_url_to_repo
-                else:
+                if not clone_through_ssh and gitlab_username:
                     parsed_url_to_repo = urlparse(element.http_url_to_repo)
 
                     unauthenticated_domain = parsed_url_to_repo.netloc.split(
@@ -196,7 +196,9 @@ def siphon(
 
                     unparsed_url_args = (
                         parsed_url_to_repo[0],
-                        authenticated_domain,
+                        authenticated_domain
+                        if gitlab_username != ""
+                        else unauthenticated_domain,
                         parsed_url_to_repo[2],
                         parsed_url_to_repo[3],
                         parsed_url_to_repo[4],
@@ -204,6 +206,8 @@ def siphon(
                     )
 
                     url_to_repo = urlunparse(unparsed_url_args)
+                else:
+                    url_to_repo = element.http_url_to_repo
 
                 handle_project(
                     repository_path=output / Path(element.path_with_namespace),
