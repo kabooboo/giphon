@@ -53,7 +53,6 @@ def test_siphon(caplog):
     """
 
     with TemporaryDirectory() as temporary_directory:
-
         namespace = Path("gitlab-org/ci-cd/shared-runners")
         output = Path(temporary_directory)
 
@@ -66,6 +65,7 @@ def test_siphon(caplog):
             save_ci_variables=False,  # Cannot save variables on public repos
             clone_archived=False,
             clone_through_ssh=False,
+            gitlab_username="",
             verbose=False,
         )
 

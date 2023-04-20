@@ -44,6 +44,11 @@ The `giphon` tool allows for the following parameters:
   Whether to download CI/CD variables to a .env directory.
 - **clone_archived** (CLI: `--clone-archived`/`--no-clone-archived`): Whether
   to also clone archived repository.
+- **clone_through_ssh**: (CLI: `--clone-through-ssh`/`--no-clone-through-ssh`):
+  Whether to use the SSH protocol or the HTTPS protocol to clone the git
+  repositories
+- **gitlab_username** (CLI: `--gitlab-username`, env: `GITLAB_USERNAME`): The
+  username to use, when cloning through HTTPS.
 - **verbose**: (CLI: `--verbose`/`-v`): The level of verbosity
 
 ## Running programmatically

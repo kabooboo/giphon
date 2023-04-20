@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from sys import stderr, stdout
 from typing import Optional
+from urllib.parse import urlparse, urlunparse
 
 from gitlab.v4.objects import Project
 from rich.progress import (
@@ -84,6 +85,14 @@ def siphon(
         True,
         help="Whether to clone repositories through SSH (Default) or https.",
     ),
+    gitlab_username: Optional[str] = Option(
+        "",
+        help=(
+            "The Username associated with the Access Token. Used for cloning"
+            "through https."
+        ),
+        envvar="GITLAB_USERNAME",
+    ),
     verbose: bool = Option(
         False,
         "--verbose",
@@ -111,6 +120,10 @@ def siphon(
           variables to a .env directory.. Defaults to True.
         clone_archived (bool, optional): Whether to clone archived repository.
           Defaults to False.
+        clone_through_ssh (bool, optional): Whether to clone using ssh or
+          https.
+        gitlab_username: (str, optional): The username to use when cloning
+          through https.
         verbose (bool, optional): Whether the outputs should be verbose.
           Defaults to False.
 
@@ -124,7 +137,6 @@ def siphon(
         TextColumn("[progress.description] {task.description}"),
         transient=True,
     ) as progress:
-
         flat_tree_task_id = progress.add_task(
             description="Looking for stuff to siphon...", total=None
         )
@@ -154,13 +166,11 @@ def siphon(
         TextColumn("[progress.description] {task.description}"),
         transient=True,
     ) as progress:
-
         clone_task_id = progress.add_task(description="Cloning")
 
         processed = 0
 
         for element in progress.track(flat_tree, task_id=clone_task_id):
-
             element_type = get_gitlab_element_type(element)
             element_full_path = get_gitlab_element_full_path(element)
 
@@ -170,12 +180,34 @@ def siphon(
             )
 
             if isinstance(element, Project):
+                if clone_through_ssh:
+                    url_to_repo = element.ssh_url_to_repo
+                if not clone_through_ssh and gitlab_username:
+                    parsed_url_to_repo = urlparse(element.http_url_to_repo)
 
-                url_to_repo = (
-                    element.ssh_url_to_repo
-                    if clone_through_ssh
-                    else element.http_url_to_repo
-                )
+                    unauthenticated_domain = parsed_url_to_repo.netloc.split(
+                        "@"
+                    )[-1]
+
+                    authenticated_domain = (
+                        f"{gitlab_username}:{gitlab_token}"
+                        f"@{unauthenticated_domain}"
+                    )
+
+                    unparsed_url_args = (
+                        parsed_url_to_repo[0],
+                        authenticated_domain
+                        if gitlab_username != ""
+                        else unauthenticated_domain,
+                        parsed_url_to_repo[2],
+                        parsed_url_to_repo[3],
+                        parsed_url_to_repo[4],
+                        parsed_url_to_repo[5],
+                    )
+
+                    url_to_repo = urlunparse(unparsed_url_args)
+                else:
+                    url_to_repo = element.http_url_to_repo
 
                 handle_project(
                     repository_path=output / Path(element.path_with_namespace),
