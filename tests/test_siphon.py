@@ -53,7 +53,6 @@ def test_siphon(caplog):
     """
 
     with TemporaryDirectory() as temporary_directory:
-
         namespace = Path("gitlab-org/ci-cd/shared-runners")
         output = Path(temporary_directory)
 

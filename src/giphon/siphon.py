@@ -137,7 +137,6 @@ def siphon(
         TextColumn("[progress.description] {task.description}"),
         transient=True,
     ) as progress:
-
         flat_tree_task_id = progress.add_task(
             description="Looking for stuff to siphon...", total=None
         )
@@ -167,13 +166,11 @@ def siphon(
         TextColumn("[progress.description] {task.description}"),
         transient=True,
     ) as progress:
-
         clone_task_id = progress.add_task(description="Cloning")
 
         processed = 0
 
         for element in progress.track(flat_tree, task_id=clone_task_id):
-
             element_type = get_gitlab_element_type(element)
             element_full_path = get_gitlab_element_full_path(element)
 
@@ -183,7 +180,6 @@ def siphon(
             )
 
             if isinstance(element, Project):
-
                 if clone_through_ssh:
                     url_to_repo = element.ssh_url_to_repo
                 else:

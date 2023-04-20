@@ -25,7 +25,6 @@ def save_environment_variables(
     """
 
     def _save_environment_variable(variable: Variable, env_path: Path) -> None:
-
         scope = variable.environment_scope
 
         key = f'{variable.key}-{scope.replace("*", "STAR").replace("/", "-")}'
@@ -122,7 +121,6 @@ def flatten_groups_tree(
         Element: Gitlab group or project to be handled.
     """
     for group in groups:
-
         yield group
 
         yield from flatten_groups_tree(
