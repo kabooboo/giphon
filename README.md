@@ -23,8 +23,15 @@ and `sed` directly into the projects' tree structure.
 
 To install `giphon`, simply run:
 
-```shq
+```sh
 pip install --user giphon
+```
+
+And if you wish to use giphon by simply calling `giphon`, you can set-up an 
+alias in your `.bashrc` (or other, if you have another shell):
+
+```sh
+echo 'alias giphon="/usr/bin/env python3 -m giphon"' >> ~/.bashrc
 ```
 
 ## Parameters
