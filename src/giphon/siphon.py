@@ -3,6 +3,7 @@ from pathlib import Path
 from sys import stderr, stdout
 from typing import Optional
 from urllib.parse import urlparse, urlunparse
+from multiprocessing import Pool
 
 from gitlab.v4.objects import Project
 from rich.progress import (
@@ -14,11 +15,8 @@ from rich.progress import (
 )
 from typer import Option
 
-from .git import handle_project
+from .git import call_handle, handle_project
 from .gitlab import (
-    flatten_groups_tree,
-    get_gitlab_element_full_path,
-    get_gitlab_element_type,
     get_gitlab_instance,
     get_groups_from_path,
     save_environment_variables,
@@ -99,6 +97,10 @@ def siphon(
         "-v",
         help=("The level of verbosity."),
     ),
+    using_multiprocessing: Optional[bool] = Option(
+        False,
+        help="Whether cloning the repositories in parallel (be careful, you could reach rate limiting limits)",
+    )
 ) -> None:
     """
     Siphon contents from a Gitlab instance or group.
@@ -138,76 +140,67 @@ def siphon(
         transient=True,
     ) as progress:
         flat_tree_task_id = progress.add_task(
-            description="Looking for stuff to siphon...", total=None
+            description="Giphoning all the projects...", total=None
         )
 
         gl = get_gitlab_instance(url=gitlab_url, private_token=gitlab_token)
 
         groups = get_groups_from_path(namespace, gl)
 
-        flat_tree = []
+        all_project = []
 
-        for index, element in enumerate(
-            flatten_groups_tree(
-                groups=groups, gl=gl, archived=bool(clone_archived)
-            )
-        ):
-            progress.update(
-                flat_tree_task_id,
-                advance=1,
-                description=f"Found {index} elements...",
-            )
-            flat_tree.append(element)
+        for group in groups:
+            tmp_group = gl.groups.get(group.id)
+            project_in_group = tmp_group.projects.list(include_subgroups=True, all=True, archived=clone_archived)
+            all_project = all_project + project_in_group
+            progress.update(flat_tree_task_id, advance=len(project_in_group))
+
+    logger.info(f"Found {len(all_project)} projects to clone")
 
     with Progress(
         SpinnerColumn(),
-        MofNCompleteColumn(),
         BarColumn(),
         TextColumn("[progress.description] {task.description}"),
         transient=True,
     ) as progress:
-        clone_task_id = progress.add_task(description="Cloning")
+        clone_task_id = progress.add_task(description="Cloning", total=len(all_project))
 
-        processed = 0
+        project_cloning_arguments = []
 
-        for element in progress.track(flat_tree, task_id=clone_task_id):
-            element_type = get_gitlab_element_type(element)
-            element_full_path = get_gitlab_element_full_path(element)
+        cloning_iterable = all_project if using_multiprocessing else progress.track(all_project, task_id=clone_task_id)
 
-            progress.update(
-                clone_task_id,
-                description=(f"Handling {element_type} {element_full_path}"),
-            )
+        for element in cloning_iterable:
+            if clone_through_ssh:
+                url_to_repo = element.ssh_url_to_repo
+            elif not clone_through_ssh and gitlab_username:
+                parsed_url_to_repo = urlparse(element.http_url_to_repo)
 
-            if isinstance(element, Project):
-                if clone_through_ssh:
-                    url_to_repo = element.ssh_url_to_repo
-                elif not clone_through_ssh and gitlab_username:
-                    parsed_url_to_repo = urlparse(element.http_url_to_repo)
+                unauthenticated_domain = parsed_url_to_repo.netloc.split(
+                    "@"
+                )[-1]
 
-                    unauthenticated_domain = parsed_url_to_repo.netloc.split(
-                        "@"
-                    )[-1]
+                authenticated_domain = (
+                    f"{gitlab_username}:{gitlab_token}"
+                    f"@{unauthenticated_domain}"
+                )
 
-                    authenticated_domain = (
-                        f"{gitlab_username}:{gitlab_token}"
-                        f"@{unauthenticated_domain}"
-                    )
+                unparsed_url_args = (
+                    parsed_url_to_repo[0],
+                    authenticated_domain
+                    if gitlab_username != ""
+                    else unauthenticated_domain,
+                    parsed_url_to_repo[2],
+                    parsed_url_to_repo[3],
+                    parsed_url_to_repo[4],
+                    parsed_url_to_repo[5],
+                )
 
-                    unparsed_url_args = (
-                        parsed_url_to_repo[0],
-                        authenticated_domain
-                        if gitlab_username != ""
-                        else unauthenticated_domain,
-                        parsed_url_to_repo[2],
-                        parsed_url_to_repo[3],
-                        parsed_url_to_repo[4],
-                        parsed_url_to_repo[5],
-                    )
+                url_to_repo = urlunparse(unparsed_url_args)
+            else:
+                url_to_repo = element.http_url_to_repo
 
-                    url_to_repo = urlunparse(unparsed_url_args)
-                else:
-                    url_to_repo = element.http_url_to_repo
+            if not using_multiprocessing:
+                progress.update(clone_task_id, description=f"Done cloning {element.path_with_namespace}", advance=1)
 
                 handle_project(
                     repository_path=output / Path(element.path_with_namespace),
@@ -215,10 +208,23 @@ def siphon(
                     fetch=bool(fetch_repositories),
                     logger=logger,
                 )
+            else:
+                project_cloning_arguments.append([
+                    output / Path(element.path_with_namespace),
+                    url_to_repo,
+                    bool(fetch_repositories),
+                    logger,
+                ])
 
-            if save_ci_variables:
+        if using_multiprocessing:
+            with Pool() as pool:
+                results = pool.imap(call_handle, project_cloning_arguments)
+                for repo in results:
+                    # do not work very well ? maybe a locking issue ?
+                    progress.update(clone_task_id, description=f"Done cloning {repo}", advance=1)
+
+        if save_ci_variables:
+            for element in all_project:
                 save_environment_variables(output, element, logger)
 
-            processed += 1
-
-        logger.info(f"Done cloning {processed} elements.")
+        logger.info(f"\nDone cloning all the projects!")

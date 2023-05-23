@@ -103,38 +103,6 @@ def get_gitlab_element_full_path(element: RESTObject) -> Path:
             f"Excpected {Group} or {Project}"
         )
 
-
-def flatten_groups_tree(
-    *, groups: List[RESTObject], gl: Gitlab, archived: bool = False
-) -> Generator[RESTObject, None, None]:
-    """
-    Generate a flat tree containing all elements to handle for a given set of
-    groups.
-
-    Args:
-        groups (List[Group]): A list of starting groups
-        gl (Gitlab): the Python-Gitlab API instance
-        archived (bool, optional): Whether to get information from archived
-          projects. Defaults to False.
-
-    Yields:
-        Element: Gitlab group or project to be handled.
-    """
-    for group in groups:
-        yield group
-
-        yield from flatten_groups_tree(
-            groups=[
-                gl.groups.get(subgroup.id)
-                for subgroup in group.subgroups.list(all=True)
-            ],
-            gl=gl,
-            archived=archived,
-        )
-        for project in group.projects.list(all=True, archived=archived):
-            yield gl.projects.get(project.id)
-
-
 def get_gitlab_instance(*, url: str, private_token: str) -> Gitlab:
     """
     Get a Python Gitlab API instance
