@@ -1,4 +1,4 @@
 typer>=0.7
-python-gitlab>=3,<4
+python-gitlab>=3,<5
 GitPython>=3,<4
 rich>=12,<14
