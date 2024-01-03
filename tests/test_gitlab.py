@@ -10,6 +10,7 @@ from pathlib import Path
 
 import gitlab
 import pytest
+
 from giphon.gitlab import (
     flatten_groups_tree,
     get_gitlab_element_full_path,

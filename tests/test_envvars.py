@@ -5,10 +5,7 @@ Integration test for the main function.
 """
 
 
-from giphon.envvars import (
-    _match_environment_to_scope,
-    source,
-)
+from giphon.envvars import _match_environment_to_scope
 
 
 def test_match_environment_to_scope():
@@ -46,7 +43,9 @@ def test_match_environment_to_scope():
     )
 
 
-# def test_match_environment_to_scope():
-#    TODO: setup a fake directory structure with hierarchy and test variables
-# are imported in the correct order
-#     source_environment_variables
+def test_source():
+    """
+    TODO: setup a fake directory structure with hierarchy and test variables
+    are printed in the correct order.
+    """
+    ...
