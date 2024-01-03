@@ -10,7 +10,6 @@ from pathlib import Path
 
 import gitlab
 import pytest
-
 from giphon.gitlab import (
     flatten_groups_tree,
     get_gitlab_element_full_path,
@@ -281,13 +280,13 @@ def test_save_environment_variables(monkeypatch):
         assert output == (
             "Would have made the path random_path/the_group/.gitlab/.env\n"
             "Entered mock open with args ('random_path/the_group/.gitlab/.env/"
-            "ipsum-lorem', 'w') and kwargs {}\n"
+            "file:ipsum:lorem', 'w') and kwargs {}\n"
             "Would have written dolor\n"
             "Entered mock open with args ('random_path/the_group/.gitlab/.env/"
-            "ipsum-lorem', 'w') and kwargs {}\n"
+            "env_var:ipsum:lorem', 'w') and kwargs {}\n"
             "Would have written dolor\n"
             "Entered mock open with args ('random_path/the_group/.gitlab/.env/"
-            "ipsum-lorem', 'w') and kwargs {}\n"
+            "file:ipsum:lorem', 'w') and kwargs {}\n"
             "Would have written dolor\n"
         )
 

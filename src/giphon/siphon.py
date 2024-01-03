@@ -106,27 +106,6 @@ def siphon(
     This function traverses recursively a Gitlab instance or group in order to
     copy locally all of the project's repositories and their environment
     variables, while keeping the arborescence.
-
-    Args:
-        namespace (Path): The Gitlab namespace to recusively siphon.
-          Use `/` to siphon the instance.
-        output (Path): The target path to clone the repositories to.", ).
-        gitlab_token (str): The Personal Access Token for the Gitlab v4 API."
-        gitlab_url (str): The URL for the Gitlab Instance. Defaults to
-          "https://gitlab.com".
-        fetch_repositories (bool, optional): Whether to fetch remotes on
-          repositories that already exist. Defaults to True.
-        save_ci_variables (bool, optional): Whether to download CI/CD
-          variables to a .env directory.. Defaults to True.
-        clone_archived (bool, optional): Whether to clone archived repository.
-          Defaults to False.
-        clone_through_ssh (bool, optional): Whether to clone using ssh or
-          https.
-        gitlab_username: (str, optional): The username to use when cloning
-          through https.
-        verbose (bool, optional): Whether the outputs should be verbose.
-          Defaults to False.
-
     """
     logger = _setup_logger(
         __name__, logging.INFO if verbose <= 0 else logging.DEBUG
