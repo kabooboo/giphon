@@ -2,6 +2,7 @@ import os
 from logging import Logger
 from pathlib import Path
 from typing import Generator, List, Union
+from urllib.parse import quote_plus
 
 from gitlab import Gitlab
 from gitlab.base import RESTObject
@@ -25,9 +26,8 @@ def save_environment_variables(
     """
 
     def _save_environment_variable(variable: Variable, env_path: Path) -> None:
-        scope = variable.environment_scope
-
-        key = f'{variable.key}-{scope.replace("*", "STAR").replace("/", "-")}'
+        escaped_scope = quote_plus(variable.environment_scope)
+        key = f"{variable.variable_type}:{variable.key}:{escaped_scope}"
 
         with open(os.path.join(env_path, f"{key}"), "w") as f:
             f.write(variable.value)
