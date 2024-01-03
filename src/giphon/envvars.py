@@ -66,7 +66,7 @@ def _source_specific_path(environment: str, path: Path) -> None:
             continue
 
         if env_type == "file":
-            value = env_path.resolve()
+            value = str(env_path.resolve())
 
         elif env_type == "env_var":
             with open(env_path) as f:
