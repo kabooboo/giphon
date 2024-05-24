@@ -131,14 +131,15 @@ class MockGitlabVariables:
         if self.list_must_error:
             raise GitlabListError
         return [
-            _MockGitlabVariable(),
-            _MockGitlabVariable(),
-            _MockGitlabVariable(),
+            _MockGitlabVariable(variable_type="file"),
+            _MockGitlabVariable(variable_type="env_var"),
+            _MockGitlabVariable(variable_type="file"),
         ]
 
 
 class _MockGitlabVariable:
-    def __init__(self, *args, **kwargs):
+    def __init__(self, variable_type: str, *args, **kwargs):
         self.environment_scope = "lorem"
         self.key = "ipsum"
         self.value = "dolor"
+        self.variable_type = variable_type
