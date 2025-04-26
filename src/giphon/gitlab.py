@@ -30,7 +30,7 @@ def save_environment_variables(
         key = f"{variable.variable_type}:{variable.key}:{escaped_scope}"
 
         with open(os.path.join(env_path, f"{key}"), "w") as f:
-            f.write(variable.value)
+            f.write(variable.value or "")
 
     gitlab_element_path = os.path.join(
         path, get_gitlab_element_full_path(element)
